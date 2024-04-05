@@ -20,11 +20,14 @@ def read_json_file(file_path: str) -> dict:
 
 def ceasar_encrypt(text: str, shift: int) -> str:
     encrypted_text = ""
-    text.upper()
+    text = text.upper()
     for x in text:
-        if x in text:
-            ind = Alphavit.index(x)
-            encrypted_text += Alphavit[ind + shift]
+        if x.isalpha():
+            try:
+                ind = Alphavit.index(x)
+                encrypted_text += Alphavit[(ind + shift) % len(Alphavit)]
+            except ValueError:
+                encrypted_text += x
         else:
             encrypted_text += x
     return encrypted_text
@@ -43,24 +46,14 @@ def main() -> None:
         second_text = paths_data.get("second_text", "")
 
         if folder and first_text and second_text:
-            try:
-                with open(f"{folder}/{first_text}", "r", encoding="utf-8") as file:
+            with open(f"{folder}/{first_text}", "r", encoding="utf-8") as file:
                     text = file.read()
-                    encrypted_text = ceasar_encrypt(text, shift)  # Используйте значение shift из модуля constant
+                    encrypted_text = ceasar_encrypt(text, shift)  
 
-                with open(f"{folder}/{second_text}", "w", encoding="utf-8") as file:
-                    file.write(encrypted_text)
-
-                print("Текст успешно зашифрован и сохранен в файле.")
-            except FileNotFoundError:
-                print("Один из файлов не найден.")
-            except Exception as e:
-                print(f"Произошла ошибка: {e}")
-        else:
-            print("Не удалось получить пути к файлам из JSON-данных.")
-    else:
-        print("Не удалось прочитать данные из JSON-файла.")
+            with open(f"{folder}/{second_text}", "w", encoding="utf-8") as file:
+                file.write(encrypted_text)
 
 
-if __name__ == "main":
+
+if __name__ == "__main__":
     main()
